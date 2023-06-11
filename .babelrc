@@ -1,0 +1,35 @@
+{
+  "presets": ["module:metro-react-native-babel-preset"],
+  "plugins": [
+    [
+      "module:react-native-dotenv",
+      {
+        "envName": "APP_ENV",
+        "moduleName": "@env",
+        "path": ".env"
+      }
+    ],
+    [
+      "module-resolver",
+      {
+        "root": ["./src"],
+        "extensions": [
+          ".ios.js",
+          ".android.js",
+          ".js",
+          ".ts",
+          ".tsx",
+          ".json",
+          ".png"
+        ],
+        "alias": {
+          "@data": ["./src/Data"],
+          "@domain": ["./src/Domain"],
+          "@presentation": ["./src/Presentation"],
+          "@assets": ["./src/Assets"],
+          "@utils": ["./src/utils"]
+        }
+      }
+    ]
+  ]
+}
