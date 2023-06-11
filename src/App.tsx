@@ -23,7 +23,7 @@ function App(): JSX.Element {
     async function prepare() {
       try {
         // our api calls will be here.
-        new Promise((resolve: any) => setTimeout(resolve, 4000)); // wait for 5 secs
+        new Promise((resolve: any) => setTimeout(resolve, 4000)); // wait for 4 secs
       } catch (e) {
         console.warn(e);
       } finally {
