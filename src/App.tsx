@@ -10,6 +10,7 @@ import SplashScreen from 'react-native-splash-screen';
 import MainStack from './Presentation/stacks/MainStack';
 import {GlobalProvider} from '@presentation/context/global.context';
 import {AuthProvider} from '@presentation/context/auth.context';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 
 function App(): JSX.Element {
   const [onboarding, setOnboarding] = React.useState<boolean>(false); // [state, setState]
@@ -17,7 +18,6 @@ function App(): JSX.Element {
     onboarding,
     setOnboarding,
   } as any);
-  const [isAuthenticated, setIsAuthenticated] = React.useState<boolean>(false);
 
   useEffect(() => {
     async function prepare() {
@@ -35,8 +35,10 @@ function App(): JSX.Element {
 
   return (
     <GlobalProvider value={{globalState, setGlobalState}}>
-      <AuthProvider value={{isAuthenticated, setIsAuthenticated}}>
-        <MainStack />
+      <AuthProvider>
+        <GestureHandlerRootView style={{flex: 1}}>
+          <MainStack />
+        </GestureHandlerRootView>
       </AuthProvider>
     </GlobalProvider>
   );

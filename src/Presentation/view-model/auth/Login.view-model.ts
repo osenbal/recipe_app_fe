@@ -4,6 +4,8 @@ import LoginUsecase from '@domain/interactors/auth/LoginUsecase';
 import AuthAPI from '@data/auth/AuthAPI';
 import {ILoginResponse} from '@domain/entity/auth/structures/LoginResponse';
 import AsyncStorageService from '@presentation/storage/asyncStorage';
+import {useNavigation} from '@react-navigation/native';
+import {useAuthContext} from '@presentation/context/auth.context';
 
 interface IErrors {
   email: string | null;
@@ -11,7 +13,9 @@ interface IErrors {
 }
 
 export default function LoginViewModel() {
+  const navigation = useNavigation();
   const loginUsecase = new LoginUsecase(new AuthAPI());
+  const {setIsAuthenticated} = useAuthContext();
 
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -110,22 +114,30 @@ export default function LoginViewModel() {
         }));
 
         // store token to storage
-        // await AsyncStorageService.setItem(
-        //   'accessToken',
-        //   loginResponse.body?.token.accessToken || '',
-        // );
-        // await AsyncStorageService.setItem(
-        //   'refreshToken',
-        //   loginResponse.body?.token.refreshToken || '',
-        // );
-        // await AsyncStorageService.setItem(
-        //   'role',
-        //   JSON.stringify(loginResponse.body?.role) || '',
-        // );
+        if (loginResponse.body) {
+          await AsyncStorageService.setItem(
+            '@accessToken',
+            loginResponse.body?.token.accessToken,
+          );
+          await AsyncStorageService.setItem(
+            '@refreshToken',
+            loginResponse.body?.token.refreshToken,
+          );
+          await AsyncStorageService.setItem(
+            '@role',
+            JSON.stringify(loginResponse.body?.role),
+          );
+
+          await AsyncStorageService.setItem('@onboarding', 'true');
+          // navigate to home
+          navigation.navigate('DashboardStack' as never);
+          setIsAuthenticated(true);
+        }
       }
     } catch (error: any) {
       console.log('Login Error :', error);
       ToastAndroid.show(JSON.stringify(error?.message), ToastAndroid.SHORT);
+      throw error;
     } finally {
       setIsLoadingLogin(false);
     }

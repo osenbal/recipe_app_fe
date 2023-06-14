@@ -17,6 +17,7 @@ type Props = {
   imageUrl: string | null;
   isFavorited?: boolean;
   onPress?: () => void;
+  handleFavorite?: () => void;
 };
 const CardPost: React.FC<Props> = ({
   id,
@@ -26,6 +27,7 @@ const CardPost: React.FC<Props> = ({
   imageUrl,
   isFavorited = false,
   onPress,
+  handleFavorite,
 }) => {
   return (
     <Pressable onPress={onPress}>
@@ -44,22 +46,32 @@ const CardPost: React.FC<Props> = ({
             {title}
           </Text>
           <View style={stylesCardPost.containerCardAction}>
-            <View>
-              <Text style={stylesCardPost.cardTextTime}>Time</Text>
-              <Text style={stylesCardPost.cardTimeCook}>{time}</Text>
-            </View>
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                width: '100%',
+                alignItems: 'center',
+              }}>
+              <View>
+                <Text style={stylesCardPost.cardTextTime}>Time</Text>
+                <Text style={stylesCardPost.cardTimeCook}>{time}</Text>
+              </View>
 
-            <View>
-              <View
-                style={[
-                  stylesCardPost.cardIconBookmark,
-                  {
-                    backgroundColor: isFavorited
-                      ? colors.primaryColors.primary100
-                      : colors.neutralColors.white,
-                  },
-                ]}>
-                <IconBookmark width={16} height={16} />
+              <View>
+                <Pressable
+                  onPress={handleFavorite}
+                  style={[
+                    stylesCardPost.cardIconBookmark,
+                    {
+                      backgroundColor: isFavorited
+                        ? colors.primaryColors.primary100
+                        : colors.neutralColors.white,
+                    },
+                  ]}>
+                  <IconBookmark width={16} height={16} />
+                </Pressable>
               </View>
             </View>
           </View>
@@ -239,6 +251,48 @@ export const CardFavoriteRecipe: React.FC<PropsFavoriteRecipe> = ({
   );
 };
 
+type PropsCardPostSearchResult = {
+  thumbnail_url: string;
+  title: string;
+  chef_name: string;
+  chef_email: string;
+  onPress: () => void;
+};
+
+export const CardPostSearchResult: React.FC<PropsCardPostSearchResult> = ({
+  thumbnail_url,
+  title,
+  chef_name,
+  chef_email,
+  onPress,
+}) => {
+  return (
+    <Pressable style={stylesCardSearch.cardRecipe} onPress={onPress}>
+      <View style={stylesCardSearch.card_thumbnail}>
+        <LinearGradient
+          style={stylesCardSearch.overlayImg}
+          colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.9)']}
+        />
+        <Image
+          style={stylesCardSearch.card_image}
+          source={thumbnail_url ? {uri: thumbnail_url} : imgThumb}
+        />
+      </View>
+      <View
+        style={{
+          position: 'absolute',
+          bottom: 10,
+          left: 10,
+        }}>
+        <Text style={stylesCardSearch.title_recipe}>{title}</Text>
+        <Text style={stylesCardSearch.author_recipe}>
+          {chef_name || chef_email}
+        </Text>
+      </View>
+    </Pressable>
+  );
+};
+
 const stylesCardPost = StyleSheet.create({
   cardContainer: {
     borderRadius: 10,
@@ -265,6 +319,7 @@ const stylesCardPost = StyleSheet.create({
     padding: 10,
     paddingTop: 70,
     backgroundColor: colors.neutralColors.gray4,
+    height: 170,
     borderRadius: 10,
   },
   cardTitle: {
@@ -280,7 +335,11 @@ const stylesCardPost = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 19,
+    // marginTop: 19,
+    position: 'absolute',
+    bottom: 10,
+    left: 10,
+    width: '100%',
   },
   cardTextTime: {
     fontFamily: fonts.smallTextRegular.fontFamily,
@@ -360,6 +419,42 @@ const stylesCardPostNewRecipe = StyleSheet.create({
     width: 25,
     height: 25,
     borderRadius: 25 / 2,
+  },
+});
+
+const stylesCardSearch = StyleSheet.create({
+  cardRecipe: {
+    flex: 1,
+    borderRadius: 10,
+    flexBasis: '48%',
+  },
+  card_thumbnail: {
+    borderRadius: 10,
+  },
+  overlayImg: {
+    position: 'absolute',
+    width: '100%',
+    height: 150,
+    zIndex: 1,
+    borderRadius: 10,
+  },
+  card_image: {
+    width: '100%',
+    borderRadius: 10,
+    resizeMode: 'cover',
+    height: 150,
+  },
+  title_recipe: {
+    fontFamily: fonts.snmallerTextRegular.fontFamily,
+    fontSize: fonts.snmallerTextRegular.fontSize,
+    fontWeight: 'bold',
+    color: colors.neutralColors.white,
+  },
+  author_recipe: {
+    fontFamily: fonts.smallerLabelRegular.fontFamily,
+    fontSize: fonts.smallerLabelRegular.fontSize,
+    fontWeight: '400',
+    color: colors.neutralColors.gray3,
   },
 });
 

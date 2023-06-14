@@ -14,6 +14,8 @@ import HomeViewModel from '@presentation/view-model/dashboard/home.view-model';
 import CardPost, {
   CardPostNewRecipe,
 } from '@presentation/components/card/CardPost';
+import {IRecipeResponseBody} from '@domain/entity/recipe/structures/GetRecipes';
+import {BottomSheetModal, BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 
 import {fonts} from '@assets/fonts/fonts';
 import {colors} from '@assets/colors/colors';
@@ -23,7 +25,18 @@ import IconFilter from '@assets/icons/icon_filter.svg';
 const avatarImg = require('@assets/images/avatar/img_avatar.png');
 
 const HomeView: React.FC = ({navigation}: any) => {
-  const {handleFilter, filterActive, filters} = HomeViewModel();
+  const {
+    handleFilterCategory,
+    filterActive,
+    recipes,
+    user,
+    categories,
+    searchText,
+    setSearchText,
+    handleSearchRecipe,
+    searchFocus,
+    setSearchFocus,
+  } = HomeViewModel();
 
   return (
     <>
@@ -33,13 +46,21 @@ const HomeView: React.FC = ({navigation}: any) => {
             <View style={{paddingBottom: 50}}>
               <View style={styles.container_header}>
                 <View>
-                  <Text style={styles.header}>Hello Chef Juna</Text>
+                  <Text style={styles.header}>
+                    Hello {user ? user.name : 'Guest'}
+                  </Text>
                   <Text style={styles.subHeader}>
                     What are you cooking today?
                   </Text>
                 </View>
                 <View>
-                  <Image source={avatarImg} />
+                  <Image
+                    source={
+                      user && user.profile_url != ''
+                        ? {uri: user.profile_url}
+                        : avatarImg
+                    }
+                  />
                 </View>
               </View>
 
@@ -49,7 +70,12 @@ const HomeView: React.FC = ({navigation}: any) => {
                   placeholder="Search recipes"
                   iconPosition="left"
                   disabled={false}
+                  onSubmitEditing={handleSearchRecipe}
+                  value={searchText}
+                  onChange={e => setSearchText(e)}
                   icon={<IconSearch width={18} height={18} />}
+                  onFocusInput={() => navigation.navigate('Search')}
+                  // onBlurInput={() => setSearchFocus(false)}
                 />
 
                 <FilterButton
@@ -75,11 +101,11 @@ const HomeView: React.FC = ({navigation}: any) => {
                 scrollEventThrottle={200}
                 pagingEnabled={true}>
                 <View style={[styles.container_filter, {flex: 1}]}>
-                  {filters.map((filter, index) => (
+                  {categories.map((category, index) => (
                     <FilterButton
                       key={index}
-                      onPress={() => handleFilter(filter)}
-                      outline={filterActive == filter ? false : null}
+                      onPress={() => handleFilterCategory(category)}
+                      outline={filterActive === category.name ? false : null}
                       style={styles.filter_btn}
                       content={
                         <Text
@@ -89,12 +115,12 @@ const HomeView: React.FC = ({navigation}: any) => {
                             styles.filter_text,
                             {
                               color:
-                                filterActive == filter
+                                filterActive == category.name
                                   ? colors.neutralColors.white
                                   : colors.primaryColors.primary100,
                             },
                           ]}>
-                          {filter}
+                          {category.name}
                         </Text>
                       }
                     />
@@ -102,67 +128,39 @@ const HomeView: React.FC = ({navigation}: any) => {
                 </View>
               </ScrollView>
 
-              <ScrollView
-                horizontal={true}
-                alwaysBounceHorizontal={true}
-                bounces={true}
-                decelerationRate="fast"
-                showsHorizontalScrollIndicator={false}
-                scrollEventThrottle={200}>
-                <View style={styles.container_cardPosts}>
-                  <CardPost
-                    id={1}
-                    title="Classic Greek Salad"
-                    time="15 Mins"
-                    imageUrl=""
-                    onPress={() =>
-                      navigation.navigate('DetailRecipe', {
-                        itemId: 1,
-                      })
-                    }
-                  />
-                  <CardPost
-                    id={2}
-                    title="Classic Greek Salad"
-                    time="15 Mins"
-                    imageUrl=""
-                    onPress={() =>
-                      navigation.navigate('DetailRecipe', {
-                        itemId: 2,
-                      })
-                    }
-                  />
-                  <CardPost
-                    id={3}
-                    title="Classic Greek Salad"
-                    time="15 Mins"
-                    imageUrl=""
-                    onPress={() =>
-                      navigation.navigate('DetailRecipe', {
-                        itemId: 3,
-                      })
-                    }
-                  />
-                  <CardPost
-                    id={4}
-                    title="Classic Greek Salad"
-                    time="15 Mins"
-                    imageUrl=""
-                  />
-                  <CardPost
-                    id={5}
-                    title="Classic Greek Salad"
-                    time="15 Mins"
-                    imageUrl=""
-                  />
-                  <CardPost
-                    id={6}
-                    title="Classic Greek Salad"
-                    time="15 Mins"
-                    imageUrl=""
-                  />
+              {recipes.length != 0 ? (
+                <ScrollView
+                  horizontal={true}
+                  alwaysBounceHorizontal={true}
+                  bounces={true}
+                  decelerationRate="fast"
+                  showsHorizontalScrollIndicator={false}
+                  scrollEventThrottle={200}>
+                  <View style={styles.container_cardPosts}>
+                    {recipes.map(
+                      (recipe: IRecipeResponseBody, index: number) => (
+                        <CardPost
+                          key={index}
+                          id={index}
+                          title={recipe.title}
+                          time={`${recipe.cookingTime} Mins`}
+                          imageUrl={recipe.thumbnail_url}
+                          isFavorited={recipe.is_favorite}
+                          onPress={() =>
+                            navigation.navigate('DetailRecipe', {
+                              recipeId: recipe.id,
+                            })
+                          }
+                        />
+                      ),
+                    )}
+                  </View>
+                </ScrollView>
+              ) : (
+                <View style={{marginVertical: 50}}>
+                  <Text style={{textAlign: 'center'}}>No recipes found</Text>
                 </View>
-              </ScrollView>
+              )}
 
               <View style={{marginTop: 18, marginBottom: 30}}>
                 <Text style={styles.header_text_newRecipes}>New Recipes</Text>

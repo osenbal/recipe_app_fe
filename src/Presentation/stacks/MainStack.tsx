@@ -7,12 +7,14 @@ import DashboardStack from './DashbooardStack';
 import DetailRecipeView from '@presentation/views/dashboard/DetailRecipe.view';
 import RegisterView from '@presentation/views/auth/Register.view';
 import LoginView from '@presentation/views/auth/Login.view';
-import AddRecipeView from '@presentation/views/dashboard/AddRecipe.view';
 import Test from '@presentation/views/test';
+import {useAuthContext} from '@presentation/context/auth.context';
+import SearchView from '@presentation/views/dashboard/Seach.view';
 
 const Stack = createNativeStackNavigator();
 
 const MainStack: React.FC = () => {
+  const {isAuthenticated} = useAuthContext();
   const [onboarding, setOnboarding] = React.useState<boolean>(false);
   const [loading, setLoading] = React.useState<boolean>(true);
 
@@ -25,6 +27,7 @@ const MainStack: React.FC = () => {
       })
       .catch((err: any) => {
         console.warn(err);
+        throw err;
       })
       .finally(() => {
         setLoading(false);
@@ -46,15 +49,28 @@ const MainStack: React.FC = () => {
           }}>
           {
             // if onboarding is true, show home screen
-            onboarding == true ? null : (
+            onboarding == true || isAuthenticated === true ? null : (
               <Stack.Screen name="Onboarding" component={Onboarding} />
             )
           }
           <Stack.Screen name="DashboardStack" component={DashboardStack} />
+          <Stack.Screen
+            name="Search"
+            component={SearchView}
+            options={{
+              animation: 'slide_from_right',
+              animationDuration: 10,
+              animationTypeForReplace: 'pop',
+            }}
+          />
           <Stack.Screen name="Test" component={Test} />
           <Stack.Screen name="DetailRecipe" component={DetailRecipeView} />
-          <Stack.Screen name="Register" component={RegisterView} />
-          <Stack.Screen name="Login" component={LoginView} />
+          {isAuthenticated === true ? null : (
+            <>
+              <Stack.Screen name="Register" component={RegisterView} />
+              <Stack.Screen name="Login" component={LoginView} />
+            </>
+          )}
         </Stack.Navigator>
       )}
     </NavigationContainer>

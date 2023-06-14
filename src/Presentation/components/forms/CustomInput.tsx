@@ -17,6 +17,11 @@ type Props = {
   style?: any;
   multiline?: boolean;
   numberOfLines?: number;
+  onFocusInput?: () => void;
+  onBlurInput?: () => void;
+  onPress?: () => void;
+  onSubmitEditing?: () => void;
+  autoFocus?: boolean;
 };
 
 const CustomInput: React.FC<Props> = ({
@@ -33,15 +38,21 @@ const CustomInput: React.FC<Props> = ({
   style,
   multiline = false,
   numberOfLines = 1,
+  onFocusInput,
+  onBlurInput,
+  onSubmitEditing,
+  autoFocus,
 }: Props) => {
   const [isFocused, setIsFocused] = useState(false);
 
   const onFocus = () => {
     setIsFocused(true);
+    onFocusInput && onFocusInput();
   };
 
   const onBlur = () => {
     setIsFocused(false);
+    onBlurInput && onBlurInput();
   };
 
   return (
@@ -65,6 +76,7 @@ const CustomInput: React.FC<Props> = ({
             editable={disabled ? false : true}
             onFocus={onFocus}
             onBlur={onBlur}
+            autoFocus={autoFocus}
             style={[
               styles.input,
               isFocused && {color: colors.neutralColors.black},
@@ -74,6 +86,7 @@ const CustomInput: React.FC<Props> = ({
             keyboardType={keyboardType}
             secureTextEntry={secureTextEntry}
             onChangeText={onChange}
+            onSubmitEditing={onSubmitEditing}
           />
           {iconPosition === 'right' && (
             <View style={styles.container_input_icon}>{icon}</View>
