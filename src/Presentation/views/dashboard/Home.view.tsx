@@ -1,4 +1,4 @@
-import React, {useRef, useMemo, useCallback} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {
   Text,
   SafeAreaView,
@@ -6,6 +6,7 @@ import {
   Image,
   StyleSheet,
   ScrollView,
+  RefreshControl,
 } from 'react-native';
 import LayoutPadding from '@presentation/layouts/LayoutPadding';
 import CustomInput from '@presentation/components/forms/CustomInput';
@@ -14,8 +15,10 @@ import HomeViewModel from '@presentation/view-model/dashboard/home.view-model';
 import CardPost, {
   CardPostNewRecipe,
 } from '@presentation/components/card/CardPost';
+import {BottomSheetBackdrop} from '@gorhom/bottom-sheet';
+import FilterBottomSheet from '@presentation/components/bottomSheet/FilterBottomSheet';
+
 import {IRecipeResponseBody} from '@domain/entity/recipe/structures/GetRecipes';
-import {BottomSheetModal, BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 
 import {fonts} from '@assets/fonts/fonts';
 import {colors} from '@assets/colors/colors';
@@ -34,14 +37,54 @@ const HomeView: React.FC = ({navigation}: any) => {
     searchText,
     setSearchText,
     handleSearchRecipe,
-    searchFocus,
-    setSearchFocus,
+    refreshing,
+    onRefresh,
+    handleAddFavorite,
+    handleRemoveFavorite,
+    showModalFilter,
+    setShowModalFilter,
+    bottomSheetRef,
+    snapPoints,
+    handleSheetChanges,
+    filterTime,
+    filterCategory,
+    filterDish,
+    filterTimeData,
+    setFilterTime,
+    setFilterCategory,
+    setFilterDish,
+    handleFilter,
+    dish,
+    handleBackAction,
   } = HomeViewModel();
+
+  // renders
+  const renderBackdrop = useCallback(
+    (props: any) => (
+      <BottomSheetBackdrop
+        {...props}
+        opacity={0.5}
+        onPress={() => {
+          setShowModalFilter(false);
+          bottomSheetRef.current?.close();
+        }}
+      />
+    ),
+    [],
+  );
+
+  useEffect(() => {
+    handleBackAction();
+  }, []);
 
   return (
     <>
       <SafeAreaView>
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }>
           <LayoutPadding>
             <View style={{paddingBottom: 50}}>
               <View style={styles.container_header}>
@@ -79,6 +122,9 @@ const HomeView: React.FC = ({navigation}: any) => {
                 />
 
                 <FilterButton
+                  onPress={() => {
+                    setShowModalFilter(true);
+                  }}
                   outline={false}
                   style={{
                     height: 44,
@@ -146,6 +192,11 @@ const HomeView: React.FC = ({navigation}: any) => {
                           time={`${recipe.cookingTime} Mins`}
                           imageUrl={recipe.thumbnail_url}
                           isFavorited={recipe.is_favorite}
+                          handleFavorite={() => {
+                            recipe.is_favorite === false
+                              ? handleAddFavorite(recipe.id)
+                              : handleRemoveFavorite(recipe.id);
+                          }}
                           onPress={() =>
                             navigation.navigate('DetailRecipe', {
                               recipeId: recipe.id,
@@ -199,6 +250,26 @@ const HomeView: React.FC = ({navigation}: any) => {
           </LayoutPadding>
         </ScrollView>
       </SafeAreaView>
+      {showModalFilter ? (
+        <FilterBottomSheet
+          snapPoints={snapPoints}
+          bottomSheetRef={bottomSheetRef}
+          handleSheetChanges={handleSheetChanges}
+          renderBackdrop={renderBackdrop}
+          handleFilter={handleFilter}
+          filterTime={filterTime}
+          setFilterTime={setFilterTime}
+          filterCategory={filterCategory}
+          setFilterCategory={setFilterCategory}
+          filterDish={filterDish}
+          setFilterDish={setFilterDish}
+          filterTimeData={filterTimeData}
+          categories={categories}
+          dish={dish}
+        />
+      ) : (
+        <></>
+      )}
     </>
   );
 };

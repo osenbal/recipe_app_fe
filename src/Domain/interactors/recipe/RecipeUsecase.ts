@@ -42,4 +42,16 @@ export default class RecipeUsecase {
   async getRecipeById(recipe_id: number) {
     return await this.recipeRepository.getRecipeById(recipe_id);
   }
+
+  async getListUnit() {
+    return await this.recipeRepository.getListUnit();
+  }
+
+  async getListIngredient() {
+    return await this.recipeRepository.getListIngredient();
+  }
+
+  async addRecipe(formData: any) {
+    return await this.recipeRepository.addRecipe(formData);
+  }
 }

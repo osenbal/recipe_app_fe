@@ -16,9 +16,9 @@ type Props = {
   filterTime: string | undefined;
   setFilterTime: (time: 'newest' | 'oldest') => void;
   filterCategory: number | undefined;
-  setFilterCategory: (category: number) => void;
+  setFilterCategory: (category: number | undefined) => void;
   filterDish: number | undefined;
-  setFilterDish: (dish: number) => void;
+  setFilterDish: (dish: number | undefined) => void;
   filterTimeData: Array<string>;
   categories: Array<any>;
   dish: Array<any>;
@@ -109,7 +109,11 @@ const FilterBottomSheet: React.FC<Props> = ({
               return (
                 <FilterButton
                   key={index}
-                  onPress={() => setFilterCategory(item.id)}
+                  onPress={() =>
+                    item.id === filterCategory
+                      ? setFilterCategory(undefined)
+                      : setFilterCategory(item.id)
+                  }
                   style={styles.filter_btn}
                   outline={filterCategory === item.id ? false : true}
                   content={
@@ -151,7 +155,11 @@ const FilterBottomSheet: React.FC<Props> = ({
                 <FilterButton
                   key={index}
                   style={styles.filter_btn}
-                  onPress={() => setFilterDish(item.id)}
+                  onPress={() =>
+                    item.id === filterDish
+                      ? setFilterDish(undefined)
+                      : setFilterDish(item.id)
+                  }
                   outline={filterDish === item.id ? false : true}
                   content={
                     <Text

@@ -15,7 +15,6 @@ import InputIngredient from '@presentation/components/views/AddRecipe/InputIngre
 import ButtonDelete from '@presentation/components/views/AddRecipe/ButtonDelete';
 import SelectInput from '@presentation/components/forms/SelectInput';
 import useAddRecipeViewModel from '@presentation/view-model/dashboard/addRecipe.view-model';
-
 import {colors} from '@assets/colors/colors';
 import {fonts} from '@assets/fonts/fonts';
 import IconPlus from '@assets/icons/navigation/icon_plus.svg';
@@ -30,12 +29,11 @@ const AddRecipeView: React.FC = () => {
     setThumbnail,
     tab,
     setTab,
-    listIngredients,
-    listUnits,
     ingredients,
     setIngredients,
     addIngredient,
     deleteIngredient,
+    setInstructions,
     instructions,
     addInstruction,
     deleteInstruction,
@@ -45,6 +43,13 @@ const AddRecipeView: React.FC = () => {
     setDish,
     data,
     setData,
+    listCategory,
+    listDish,
+    listIngredient,
+    listUnit,
+    getNutritionFromIngredients,
+    nutrition,
+    handleCreateRecipe,
   } = useAddRecipeViewModel();
 
   return (
@@ -58,7 +63,10 @@ const AddRecipeView: React.FC = () => {
                   style={{position: 'absolute', zIndex: 2, right: 0}}
                   onPress={() => setThumbnail(null)}
                 />
-                <Image source={{uri: thumbnail}} style={styles.thumb_image} />
+                <Image
+                  source={{uri: thumbnail.uri}}
+                  style={styles.thumb_image}
+                />
               </View>
             ) : (
               <Pressable onPress={() => setModalInput(true)}>
@@ -78,8 +86,17 @@ const AddRecipeView: React.FC = () => {
               flexDirection: 'column',
               rowGap: 15,
             }}>
-            <CustomInput label="Recipe Name" placeholder="Enter recipe name" />
             <CustomInput
+              value={data.title}
+              onChange={v => setData((prev: any) => ({...prev, title: v}))}
+              label="Recipe Name"
+              placeholder="Enter recipe name"
+            />
+            <CustomInput
+              value={data.description}
+              onChange={v =>
+                setData((prev: any) => ({...prev, description: v}))
+              }
               label="Description"
               placeholder="Enter description"
               multiline={true}
@@ -89,19 +106,9 @@ const AddRecipeView: React.FC = () => {
               key={1}
               label="Category"
               style={{width: '100%'}}
-              options={[
-                {
-                  id: 1,
-                  name: 'Ayam',
-                },
-                {
-                  id: 2,
-                  name: 'Babi',
-                },
-              ]}
+              options={listCategory}
               search={true}
               onSelect={(selectedItem: any, index: number) => {
-                console.log(selectedItem);
                 setCategory(selectedItem.id);
               }}
               buttonTextAfterSelection={(selectedItem: any, index: number) =>
@@ -113,19 +120,9 @@ const AddRecipeView: React.FC = () => {
               key={2}
               label="Dish"
               style={{width: '100%'}}
-              options={[
-                {
-                  id: 1,
-                  name: 'Italian',
-                },
-                {
-                  id: 2,
-                  name: 'Indonesian',
-                },
-              ]}
+              options={listDish}
               search={true}
               onSelect={(selectedItem: any, index: number) => {
-                console.log(selectedItem);
                 setDish(selectedItem.id);
               }}
               buttonTextAfterSelection={(selectedItem: any, index: number) =>
@@ -136,12 +133,12 @@ const AddRecipeView: React.FC = () => {
             <CustomInput
               label="Servings"
               keyboardType="numeric"
-              value={data.servings}
+              value={data.serving}
               onChange={v => {
                 setData((prev: any) => {
                   return {
                     ...prev,
-                    servings: v,
+                    serving: v,
                   };
                 });
               }}
@@ -238,6 +235,7 @@ const AddRecipeView: React.FC = () => {
                                 return {
                                   ...item,
                                   ingredient_id: e.id,
+                                  ingredient_name: e.name,
                                 };
                               }
                               return item;
@@ -264,14 +262,15 @@ const AddRecipeView: React.FC = () => {
                                 return {
                                   ...item,
                                   unit_id: e.id,
+                                  unit_name: e.name,
                                 };
                               }
                               return item;
                             });
                           });
                         }}
-                        ingredients={listIngredients}
-                        units={listUnits}
+                        ingredients={listIngredient}
+                        units={listUnit}
                       />
                       <ButtonDelete
                         style={{marginTop: 15}}
@@ -321,6 +320,17 @@ const AddRecipeView: React.FC = () => {
                       <CustomInput
                         label={`Step ${index + 1}`}
                         placeholder="Enter instruction text ..."
+                        value={item}
+                        onChange={v => {
+                          setInstructions(prev => {
+                            return prev.map((item: any, idx: number) => {
+                              if (idx === index) {
+                                return v;
+                              }
+                              return item;
+                            });
+                          });
+                        }}
                       />
                       <ButtonDelete onPress={() => deleteInstruction(index)} />
                     </View>
@@ -360,6 +370,38 @@ const AddRecipeView: React.FC = () => {
                 </View>
               </View>
             )}
+          </View>
+
+          <View style={{marginTop: 50}}>
+            <Text style={{marginBottom: 10}}>Nutritions</Text>
+            <CustomInput
+              value={nutrition.calories}
+              label="Callories"
+              placeholder="Enter note"
+            />
+            <CustomInput
+              value={nutrition.protein}
+              label="Protein"
+              placeholder="Enter note"
+            />
+            <CustomInput
+              value={nutrition.carbs}
+              label="Carbs"
+              placeholder="Enter note"
+            />
+            <CustomInput
+              value={nutrition.sugar}
+              label="Sugar"
+              placeholder="Enter note"
+            />
+          </View>
+
+          <View style={{marginTop: 50}}>
+            <CustomButton
+              label="Save"
+              size="medium"
+              onPress={handleCreateRecipe}
+            />
           </View>
         </View>
 

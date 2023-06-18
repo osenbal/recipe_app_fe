@@ -141,13 +141,25 @@ export const CardPostNewRecipe: React.FC<PropsNewRecipe> = ({
 };
 
 type PropsFavoriteRecipe = {
-  navigation: any;
+  onPress?: () => void;
+  onPressFavorite?: () => void;
+  title: string;
+  cooking_time: number;
+  chef_name: string;
+  chef_email: string;
+  thumbnail_url: string | null;
 };
 export const CardFavoriteRecipe: React.FC<PropsFavoriteRecipe> = ({
-  navigation,
-}: any) => {
+  onPress,
+  onPressFavorite,
+  title,
+  cooking_time,
+  chef_name,
+  chef_email,
+  thumbnail_url,
+}) => {
   return (
-    <View style={{marginTop: 10}}>
+    <Pressable style={{marginTop: 10}} onPress={onPress}>
       <View>
         <LinearGradient
           style={{
@@ -163,7 +175,7 @@ export const CardFavoriteRecipe: React.FC<PropsFavoriteRecipe> = ({
           end={{x: 0, y: 0}}></LinearGradient>
 
         <Image
-          source={ImgRecipe1}
+          source={thumbnail_url ? {uri: thumbnail_url} : ImgRecipe1}
           style={{
             width: '100%',
             height: 150,
@@ -190,7 +202,7 @@ export const CardFavoriteRecipe: React.FC<PropsFavoriteRecipe> = ({
             fontSize: fonts.smallTextBold.fontSize,
             fontWeight: 'bold',
           }}>
-          Semur daging
+          {title}
         </Text>
 
         <View
@@ -209,7 +221,7 @@ export const CardFavoriteRecipe: React.FC<PropsFavoriteRecipe> = ({
               fontSize: fonts.smallTextRegular.fontSize,
               fontWeight: '400',
             }}>
-            by Chef Juna
+            by {chef_name || chef_email}
           </Text>
 
           <View
@@ -228,11 +240,12 @@ export const CardFavoriteRecipe: React.FC<PropsFavoriteRecipe> = ({
                 fontSize: fonts.smallTextRegular.fontSize,
                 fontWeight: '400',
               }}>
-              20 min
+              {cooking_time} min
             </Text>
-            <View
+            <Pressable
+              onPress={onPressFavorite}
               style={{
-                backgroundColor: colors.neutralColors.white,
+                backgroundColor: colors.primaryColors.primary100,
                 borderRadius: 24 / 2,
                 width: 24,
                 height: 24,
@@ -243,11 +256,11 @@ export const CardFavoriteRecipe: React.FC<PropsFavoriteRecipe> = ({
                 marginLeft: 5,
               }}>
               <IconBookmark width={17} height={17} />
-            </View>
+            </Pressable>
           </View>
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 };
 

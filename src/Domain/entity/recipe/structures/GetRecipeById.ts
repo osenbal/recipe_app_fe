@@ -55,7 +55,7 @@ interface IInstruction {
   order: number;
 }
 
-interface IUnit {
+export interface IUnit {
   id: number;
   name: string;
   createdAt?: string;

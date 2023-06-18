@@ -23,10 +23,15 @@ import IconServe from '@assets/icons/icon_serve.svg';
 import IconArrowLeft from '@assets/icons/icon_arrowLeft.svg';
 const ImgThumb300X150 = require('@assets/images/post/img_thumb_300x150.png');
 
-const DetailRecipeView: React.FC = ({route, navigation}: any) => {
-  const {recipe, loading} = DetailRecipeViewModel();
-  const [tab, setTab] = useState<'ingredient' | 'procedure'>('ingredient'); // ['ingredient', 'procedure']
-  console.log('recipe author : ', recipe?.chef);
+const DetailRecipeView: React.FC = ({navigation}: any) => {
+  const {
+    recipe,
+    loading,
+    tab,
+    setTab,
+    handleAddFavorite,
+    handleRemoveFavorite,
+  } = DetailRecipeViewModel();
   return (
     <ScrollView>
       <LayoutPadding>
@@ -73,8 +78,22 @@ const DetailRecipeView: React.FC = ({route, navigation}: any) => {
                   }}>
                   {recipe?.cookingTime} min
                 </Text>
-                <View style={styles.iconBookmark}>
-                  <Pressable onPress={() => {}}>
+                <View
+                  style={[
+                    styles.iconBookmark,
+                    {
+                      backgroundColor:
+                        recipe.is_favorite == true
+                          ? colors.primaryColors.primary100
+                          : colors.neutralColors.white,
+                    },
+                  ]}>
+                  <Pressable
+                    onPress={() =>
+                      recipe.is_favorite === true
+                        ? handleRemoveFavorite()
+                        : handleAddFavorite()
+                    }>
                     <IconBookmark width={16} height={16} />
                   </Pressable>
                 </View>

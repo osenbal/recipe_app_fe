@@ -3,6 +3,7 @@ import {IGetRecipesResponse} from '@domain/entity/recipe/structures/GetRecipes';
 import {IGetCategoryRecipe} from '@domain/entity/recipe/structures/GetCategoryRecipe';
 import {IGetRecipeByIdResponse} from '@domain/entity/recipe/structures/GetRecipeById';
 import {IGetDishRecipe} from '@domain/entity/recipe/structures/GetDishRecipe';
+import {IGetUnitResponse} from '@domain/entity/recipe/structures/GetUnit';
 import axios from '../API/axios';
 
 export default class RecipeAPI implements IRecipeRepository {
@@ -18,6 +19,15 @@ export default class RecipeAPI implements IRecipeRepository {
   async getListCategoryRecipe(): Promise<IGetCategoryRecipe> {
     try {
       const response = await axios.get('/recipe/category');
+      return response.data;
+    } catch (error) {
+      throw new Error('Error');
+    }
+  }
+
+  async getListUnit(): Promise<IGetUnitResponse> {
+    try {
+      const response = await axios.get('/recipe/unit');
       return response.data;
     } catch (error) {
       throw new Error('Error');
@@ -84,6 +94,30 @@ export default class RecipeAPI implements IRecipeRepository {
       const response = await axios.get('/recipe/dish');
       return response.data;
     } catch (error) {
+      throw new Error('Error');
+    }
+  }
+
+  async getListIngredient() {
+    try {
+      const response = await axios.get('/recipe/ingredient');
+      return response.data;
+    } catch (error) {
+      throw new Error('Error');
+    }
+  }
+
+  async addRecipe(formData: any) {
+    try {
+      const response = await axios.post('/recipe', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      console.log('response create new recipe', response);
+      return response.data;
+    } catch (error) {
+      console.log('error : ', error);
       throw new Error('Error');
     }
   }

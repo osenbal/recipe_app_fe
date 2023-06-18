@@ -1,24 +1,17 @@
 import React from 'react';
 import {View, Text, StyleSheet, TextInput, Image} from 'react-native';
 import SelectDropdown from 'react-native-select-dropdown';
-
+import {IIngredient} from '@domain/entity/recipe/structures/GetIngredient';
+import {IUnit} from '@domain/entity/recipe/structures/GetRecipeById';
 import {colors} from '@assets/colors/colors';
-import {fonts} from '@assets/fonts/fonts';
 
 import IconSearch from '@assets/icons/icon_search.svg';
 import IconDropdown from '@assets/icons/icon_dropdown.svg';
 const ImgThum = require('@assets/images/post/img_thumb.png');
 
 type Props = {
-  ingredients: Array<{
-    id: number;
-    name: string;
-    img_url: string;
-  }>;
-  units: Array<{
-    id: number;
-    name: string;
-  }>;
+  ingredients: Array<IIngredient>;
+  units: Array<IUnit>;
   ingredientSelected?: number;
   valueAmount?: string;
   valueUnit?: number;
