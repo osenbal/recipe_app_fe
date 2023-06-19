@@ -10,11 +10,13 @@ import LoginView from '@presentation/views/auth/Login.view';
 import Test from '@presentation/views/test';
 import {useAuthContext} from '@presentation/context/auth.context';
 import SearchView from '@presentation/views/dashboard/Seach.view';
+import ModalMustLogin from '@presentation/components/modal/ModalMustLogin';
 
 const Stack = createNativeStackNavigator();
 
 const MainStack: React.FC = () => {
   const {isAuthenticated} = useAuthContext();
+
   const [onboarding, setOnboarding] = React.useState<boolean>(false);
   const [loading, setLoading] = React.useState<boolean>(true);
 
@@ -63,8 +65,10 @@ const MainStack: React.FC = () => {
               animationTypeForReplace: 'pop',
             }}
           />
-          <Stack.Screen name="Test" component={Test} />
           <Stack.Screen name="DetailRecipe" component={DetailRecipeView} />
+
+          <Stack.Screen name="ModalMustLogin" component={ModalMustLogin} />
+
           {isAuthenticated === true ? null : (
             <>
               <Stack.Screen name="Register" component={RegisterView} />

@@ -50,3 +50,9 @@ interface ICommonUser {
   updatedAt?: string;
   deletedAt?: string | null;
 }
+
+export const ROLE = {
+  ADMIN: 1,
+  CHEF: 2,
+  COMMON_USER: 3,
+};

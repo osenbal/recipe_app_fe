@@ -1,17 +1,19 @@
 import {useState, useRef, useMemo, useCallback, useEffect} from 'react';
+import {Alert} from 'react-native';
 import RecipeUsecase from '@domain/interactors/recipe/RecipeUsecase';
 import RecipeAPI from '@data/recipe/RecipeAPI';
 import BottomSheet from '@gorhom/bottom-sheet';
 import {BackHandler} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 
 const SearchViewModel = () => {
+  const navigation = useNavigation();
   const recipeUsecase = new RecipeUsecase(new RecipeAPI());
 
   const filterTimeData = ['newest', 'oldest'];
 
   const [searchText, setSearchText] = useState<string>('');
   const [searchResult, setSearchResult] = useState<any[]>([]);
-  const [showModalFilter, setShowModalFilter] = useState<boolean>(false);
 
   const [categories, setCategories] = useState<any[]>([]);
   const [dish, setDish] = useState<any[]>([]);
@@ -27,7 +29,6 @@ const SearchViewModel = () => {
   const handleSheetChanges = useCallback((index: number) => {
     if (index === 0) {
       bottomSheetRef.current?.close();
-      setShowModalFilter(false);
     }
   }, []);
 
@@ -63,22 +64,7 @@ const SearchViewModel = () => {
       .catch(error => {
         console.log(error);
       })
-      .finally(() => setShowModalFilter(false));
-  };
-
-  const handleBackAction = () => {
-    const backAction = () => {
-      bottomSheetRef.current?.close();
-      setShowModalFilter(false);
-      return true;
-    };
-
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-
-    return () => backHandler.remove();
+      .finally(() => bottomSheetRef.current?.close());
   };
 
   const getListCategoryRecipe = async () => {
@@ -99,6 +85,46 @@ const SearchViewModel = () => {
     }
   };
 
+  const handleBackAction = () => {
+    const backAction = () => {
+      if (bottomSheetRef.current) {
+        bottomSheetRef.current?.close();
+      }
+
+      if (navigation.canGoBack()) {
+        navigation.goBack();
+        return true;
+      }
+
+      Alert.alert(
+        'Exit App',
+        'Exiting the application?',
+        [
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+          },
+          {
+            text: 'OK',
+            onPress: () => BackHandler.exitApp(),
+          },
+        ],
+        {
+          cancelable: false,
+        },
+      );
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => backHandler.remove();
+  };
+
   useEffect(() => {
     getListCategoryRecipe();
     getListDishRecipe();
@@ -109,8 +135,6 @@ const SearchViewModel = () => {
     setSearchText,
     searchResult,
     handleSearch,
-    showModalFilter,
-    setShowModalFilter,
     bottomSheetRef,
     snapPoints,
     handleSheetChanges,

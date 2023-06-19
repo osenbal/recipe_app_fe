@@ -7,6 +7,7 @@ import {
   StyleSheet,
   ToastAndroid,
 } from 'react-native';
+import FilterButton from '@presentation/components/buttons/FilterButton';
 import LayoutPadding from '@presentation/layouts/LayoutPadding';
 import CustomInput from '@presentation/components/forms/CustomInput';
 import CustomButton from '@presentation/components/buttons/CustomButton';
@@ -30,10 +31,6 @@ const LoginView: React.FC = ({navigation}: any) => {
     isLoadingLogin,
     login,
   } = LoginViewModel();
-
-  const showToast = () => {
-    ToastAndroid.show('A pikachu appeared nearby !', ToastAndroid.SHORT);
-  };
 
   return (
     <>
@@ -97,7 +94,7 @@ const LoginView: React.FC = ({navigation}: any) => {
 
             <View
               style={{
-                marginTop: 119,
+                marginTop: 70,
               }}>
               <Text style={styles.dontHaveAccount}>
                 Don't have an account?
@@ -108,6 +105,28 @@ const LoginView: React.FC = ({navigation}: any) => {
                   Sign up
                 </Text>
               </Text>
+            </View>
+
+            <View
+              style={{
+                marginTop: 20,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexDirection: 'row',
+              }}>
+              <FilterButton
+                style={{
+                  maxWidth: 200,
+                }}
+                outline={true}
+                onPress={() => navigation.navigate('Home')}
+                content={
+                  <View>
+                    <Text>Continue Without Login</Text>
+                  </View>
+                }
+              />
             </View>
           </LayoutPadding>
         </ScrollView>

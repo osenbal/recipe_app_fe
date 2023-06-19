@@ -28,8 +28,6 @@ const SearchView: React.FC = ({navigation}: any) => {
     setSearchText,
     handleSearch,
     searchResult,
-    setShowModalFilter,
-    showModalFilter,
     bottomSheetRef,
     snapPoints,
     handleSheetChanges,
@@ -53,7 +51,6 @@ const SearchView: React.FC = ({navigation}: any) => {
         {...props}
         opacity={0.5}
         onPress={() => {
-          setShowModalFilter(false);
           bottomSheetRef.current?.close();
         }}
       />
@@ -103,7 +100,7 @@ const SearchView: React.FC = ({navigation}: any) => {
 
                 <FilterButton
                   onPress={() => {
-                    setShowModalFilter(true);
+                    bottomSheetRef.current?.expand();
                   }}
                   outline={false}
                   style={{
@@ -153,26 +150,22 @@ const SearchView: React.FC = ({navigation}: any) => {
           </LayoutPadding>
         </ScrollView>
       </SafeAreaView>
-      {showModalFilter ? (
-        <FilterBottomSheet
-          snapPoints={snapPoints}
-          bottomSheetRef={bottomSheetRef}
-          handleSheetChanges={handleSheetChanges}
-          renderBackdrop={renderBackdrop}
-          handleFilter={handleFilter}
-          filterTime={filterTime}
-          setFilterTime={setFilterTime}
-          filterCategory={filterCategory}
-          setFilterCategory={setFilterCategory}
-          filterDish={filterDish}
-          setFilterDish={setFilterDish}
-          filterTimeData={filterTimeData}
-          categories={categories}
-          dish={dish}
-        />
-      ) : (
-        <></>
-      )}
+      <FilterBottomSheet
+        snapPoints={snapPoints}
+        bottomSheetRef={bottomSheetRef}
+        handleSheetChanges={handleSheetChanges}
+        renderBackdrop={renderBackdrop}
+        handleFilter={handleFilter}
+        filterTime={filterTime}
+        setFilterTime={setFilterTime}
+        filterCategory={filterCategory}
+        setFilterCategory={setFilterCategory}
+        filterDish={filterDish}
+        setFilterDish={setFilterDish}
+        filterTimeData={filterTimeData}
+        categories={categories}
+        dish={dish}
+      />
     </>
   );
 };

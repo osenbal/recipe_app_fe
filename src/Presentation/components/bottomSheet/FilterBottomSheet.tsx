@@ -44,7 +44,7 @@ const FilterBottomSheet: React.FC<Props> = ({
     <BottomSheet
       ref={bottomSheetRef}
       backdropComponent={renderBackdrop}
-      index={1}
+      index={-1}
       snapPoints={snapPoints}
       onChange={handleSheetChanges}>
       <View style={styles.container_bottomSheet}>

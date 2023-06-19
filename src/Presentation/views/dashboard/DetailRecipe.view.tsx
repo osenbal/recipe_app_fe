@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -24,14 +24,8 @@ import IconArrowLeft from '@assets/icons/icon_arrowLeft.svg';
 const ImgThumb300X150 = require('@assets/images/post/img_thumb_300x150.png');
 
 const DetailRecipeView: React.FC = ({navigation}: any) => {
-  const {
-    recipe,
-    loading,
-    tab,
-    setTab,
-    handleAddFavorite,
-    handleRemoveFavorite,
-  } = DetailRecipeViewModel();
+  const {recipe, tab, setTab, isAuthenticated, handleToggleFavorite, nutrions} =
+    DetailRecipeViewModel();
   return (
     <ScrollView>
       <LayoutPadding>
@@ -89,11 +83,11 @@ const DetailRecipeView: React.FC = ({navigation}: any) => {
                     },
                   ]}>
                   <Pressable
-                    onPress={() =>
-                      recipe.is_favorite === true
-                        ? handleRemoveFavorite()
-                        : handleAddFavorite()
-                    }>
+                    onPress={() => {
+                      isAuthenticated
+                        ? handleToggleFavorite()
+                        : navigation.navigate('ModalMustLogin');
+                    }}>
                     <IconBookmark width={16} height={16} />
                   </Pressable>
                 </View>
@@ -112,6 +106,52 @@ const DetailRecipeView: React.FC = ({navigation}: any) => {
                 img_urlUser={recipe.chef.profile_url}
                 name={recipe.chef.name}
               />
+
+              <View style={{marginTop: 30}}>
+                <Text
+                  style={{
+                    textAlign: 'center',
+                    fontFamily: fonts.normalTextBold.fontFamily,
+                    fontSize: fonts.normalTextBold.fontSize,
+                    fontWeight: '700',
+                    color: colors.neutralColors.black,
+                  }}>
+                  Nutrition
+                </Text>
+
+                <View style={styles.container_nutrients}>
+                  <View style={styles.rowNutrients}>
+                    <Text style={styles.textNameNutrition}>Total Calories</Text>
+                    <Text>{nutrions?.calories?.toFixed(2)}</Text>
+                  </View>
+
+                  <View style={styles.rowNutrients}>
+                    <Text style={styles.textNameNutrition}>Carbohydrates</Text>
+                    <Text>
+                      {nutrions?.totalNutrients[
+                        'CHOCDF.net'
+                      ]?.quantity?.toFixed(2)}{' '}
+                      {nutrions?.totalNutrients['CHOCDF.net']?.unit}
+                    </Text>
+                  </View>
+
+                  {/* <View style={styles.rowNutrients}>
+                    <Text style={styles.textNameNutrition}>Sugar</Text>
+                    <Text>
+                      {nutrions?.totalNutrients?.SUGAR?.quantity?.toFixed(2)}{' '}
+                      {nutrions?.totalNutrients?.SUGAR?.unit}
+                    </Text>
+                  </View> */}
+
+                  <View style={styles.rowNutrients}>
+                    <Text style={styles.textNameNutrition}>Protein</Text>
+                    <Text>
+                      {nutrions?.totalNutrients?.PROCNT?.quantity?.toFixed(2)}{' '}
+                      {nutrions?.totalNutrients?.PROCNT?.unit}
+                    </Text>
+                  </View>
+                </View>
+              </View>
 
               <View style={styles.tabs}>
                 <CustomButton
@@ -297,7 +337,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 8,
+    marginTop: 30,
     justifyContent: 'space-between',
     width: '100%',
     height: 58,
@@ -308,6 +348,29 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 25,
     justifyContent: 'space-between',
+  },
+
+  container_nutrients: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    rowGap: 10,
+    marginTop: 10,
+  },
+  rowNutrients: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: colors.neutralColors.gray2,
+    paddingBottom: 10,
+  },
+  textNameNutrition: {
+    fontFamily: fonts.smallTextSemiBold.fontFamily,
+    fontSize: fonts.smallTextSemiBold.fontSize,
+    fontWeight: '700',
+    color: colors.neutralColors.black,
   },
 });
 

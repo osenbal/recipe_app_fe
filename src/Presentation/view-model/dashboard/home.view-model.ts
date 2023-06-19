@@ -1,5 +1,5 @@
 import {useState, useCallback, useMemo, useRef} from 'react';
-import {BackHandler} from 'react-native';
+import {BackHandler, Alert} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
 import RecipeUsecase from '@domain/interactors/recipe/RecipeUsecase';
 import RecipeAPI from '@data/recipe/RecipeAPI';
@@ -20,7 +20,6 @@ const HomeViewModel = () => {
 
   const {user, isAuthenticated} = useAuthContext();
 
-  const [showModalFilter, setShowModalFilter] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [searchFocus, setSearchFocus] = useState(false);
   const [searchText, setSearchText] = useState<string>('');
@@ -35,11 +34,11 @@ const HomeViewModel = () => {
   const [filterTime, setFilterTime] = useState<'newest' | 'oldest'>('newest');
 
   const bottomSheetRef = useRef<BottomSheet>(null);
+
   const snapPoints = useMemo(() => ['25%', '70%'], []);
   const handleSheetChanges = useCallback((index: number) => {
     if (index === 0) {
       bottomSheetRef.current?.close();
-      setShowModalFilter(false);
     }
   }, []);
 
@@ -55,7 +54,6 @@ const HomeViewModel = () => {
   const getRecipes = async () => {
     try {
       const response = await recipeUsecase.getRecipes();
-      console.log('LIST RECIPE : ', response.body?.data[0].is_favorite);
       setRecipes(response?.body?.data || []);
     } catch (error) {
       console.log(error);
@@ -83,7 +81,6 @@ const HomeViewModel = () => {
       setCategories(response?.body?.data || []);
       setCategories(prev => [{id: 0, name: 'all'}, ...prev]);
       setFilterActive('all');
-      console.log('CATEGORIES : ', response);
     } catch (error) {}
   };
 
@@ -102,14 +99,13 @@ const HomeViewModel = () => {
       .catch(error => {
         console.log(error);
       })
-      .finally(() => setShowModalFilter(false));
+      .finally(() => bottomSheetRef.current?.close());
   };
 
   const handleSearchRecipe = () => {
     recipeUsecase
       .getSearchRecipe(searchText)
       .then(response => {
-        console.log('SEARCH : ', response);
         setRecipes(response?.body?.data || []);
         navigation.navigate(
           'Search' as never,
@@ -128,7 +124,6 @@ const HomeViewModel = () => {
   const handleAddFavorite = (recipe_id: number) => {
     try {
       favoriteUsecase.addFavorite(recipe_id).then(response => {
-        console.log('ADD FAVORITE : ', response);
         const newRecipe = recipes.map(item => {
           if (item.id === recipe_id) {
             return {
@@ -149,7 +144,6 @@ const HomeViewModel = () => {
   const handleRemoveFavorite = (recipe_id: number) => {
     try {
       favoriteUsecase.deleteFavorite(recipe_id).then(response => {
-        console.log('DELETE FAVORITE : ', response);
         const newRecipe = recipes.map(item => {
           if (item.id === recipe_id) {
             return {
@@ -164,6 +158,14 @@ const HomeViewModel = () => {
       });
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const toggleFavorite = (recipe_id: number, is_favorite: boolean) => {
+    if (is_favorite) {
+      handleRemoveFavorite(recipe_id);
+    } else {
+      handleAddFavorite(recipe_id);
     }
   };
 
@@ -185,7 +187,31 @@ const HomeViewModel = () => {
   const handleBackAction = () => {
     const backAction = () => {
       bottomSheetRef.current?.close();
-      setShowModalFilter(false);
+
+      if (navigation.canGoBack()) {
+        navigation.goBack();
+        return true;
+      }
+
+      Alert.alert(
+        'Exit App',
+        'Exiting the application?',
+        [
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+          },
+          {
+            text: 'OK',
+            onPress: () => BackHandler.exitApp(),
+          },
+        ],
+        {
+          cancelable: false,
+        },
+      );
+
       return true;
     };
 
@@ -236,8 +262,6 @@ const HomeViewModel = () => {
     handleAddFavorite,
     handleRemoveFavorite,
     getListCategoryRecipe,
-    showModalFilter,
-    setShowModalFilter,
     filterTime,
     filterCategory,
     filterDish,
@@ -248,6 +272,7 @@ const HomeViewModel = () => {
     handleFilter,
     dish,
     handleBackAction,
+    toggleFavorite,
   };
 };
 

@@ -76,13 +76,6 @@ export default function LoginViewModel() {
         password,
       );
 
-      console.log('================');
-      console.log('login');
-      console.log('email: ', email);
-      console.log('password: ', password);
-      console.log('loginResponse: ', loginResponse);
-      console.log('================');
-
       // handle response login
       if (loginResponse.status == 403) {
         if (loginResponse.message == 'Invalid password') {
@@ -115,23 +108,25 @@ export default function LoginViewModel() {
 
         // store token to storage
         if (loginResponse.body) {
-          await AsyncStorageService.setItem(
-            '@accessToken',
-            loginResponse.body?.token.accessToken,
-          );
-          await AsyncStorageService.setItem(
-            '@refreshToken',
-            loginResponse.body?.token.refreshToken,
-          );
-          await AsyncStorageService.setItem(
-            '@role',
-            JSON.stringify(loginResponse.body?.role),
-          );
+          Promise.all([
+            AsyncStorageService.setItem(
+              '@accessToken',
+              loginResponse.body?.token.accessToken,
+            ),
+            AsyncStorageService.setItem(
+              '@refreshToken',
+              loginResponse.body?.token.refreshToken,
+            ),
+            AsyncStorageService.setItem(
+              '@role',
+              JSON.stringify(loginResponse.body?.role),
+            ),
+            AsyncStorageService.setItem('@onboarding', 'true'),
+          ]);
 
-          await AsyncStorageService.setItem('@onboarding', 'true');
+          setIsAuthenticated(true);
           // navigate to home
           navigation.navigate('DashboardStack' as never);
-          setIsAuthenticated(true);
         }
       }
     } catch (error: any) {

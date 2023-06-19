@@ -16,7 +16,6 @@ const MyFavoriteViewModel = () => {
   const getListFavorite = async () => {
     try {
       const response = await favoriteRepository.getListFavorite();
-      console.log('FAVORITE : ', response);
       setMyFavorite(response.body?.data || []);
     } catch (error) {
       console.log(error);

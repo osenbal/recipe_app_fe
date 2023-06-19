@@ -36,7 +36,7 @@ export interface IRecipe {
   is_favorite: boolean;
 }
 
-interface IIngredient {
+export interface IIngredient {
   id: number;
   name: string;
   img_url: string;

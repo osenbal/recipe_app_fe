@@ -1,21 +1,39 @@
-import {useEffect, useState, useCallback} from 'react';
+import {useEffect, useState, useCallback, useRef} from 'react';
 import {useRoute, useFocusEffect} from '@react-navigation/native';
-import {IRecipe} from '@domain/entity/recipe/structures/GetRecipeById';
+import {
+  IRecipe,
+  IIngredient,
+} from '@domain/entity/recipe/structures/GetRecipeById';
 import RecipeUsecase from '@domain/interactors/recipe/RecipeUsecase';
 import FavoriteUsecase from '@domain/interactors/favorite/FavoriteUsecase';
 import FavoriteAPI from '@data/favorite/FavoriteAPI';
 import RecipeAPI from '@data/recipe/RecipeAPI';
+import {useAuthContext} from '@presentation/context/auth.context';
+import NutritionAPI from '@data/nutrition/NutritionAPI';
+import NutritionUsecase from '@domain/interactors/nutrition/NutritionUsecase';
 
 const DetailRecipeViewModel = () => {
   const route = useRoute();
-  const favorite = new FavoriteUsecase(new FavoriteAPI());
   const {recipeId} = route.params as {recipeId: number};
 
+  const favorite = new FavoriteUsecase(new FavoriteAPI());
   const recipeUsecase = new RecipeUsecase(new RecipeAPI());
+  const nutritionUsecase = new NutritionUsecase(new NutritionAPI());
+
+  const {user, isAuthenticated} = useAuthContext();
 
   const [recipe, setRecipe] = useState<IRecipe | null | undefined>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [tab, setTab] = useState<'ingredient' | 'procedure'>('ingredient'); // ['ingredient', 'procedure']
+  const [nutrions, setNutrions] = useState<any>(null);
+
+  const handleToggleFavorite = () => {
+    if (recipe?.is_favorite) {
+      handleRemoveFavorite();
+    } else {
+      handleAddFavorite();
+    }
+  };
 
   const handleAddFavorite = () => {
     try {
@@ -52,6 +70,8 @@ const DetailRecipeViewModel = () => {
       setLoading(true);
       const response = await recipeUsecase.getRecipeById(recipe_id);
       setRecipe(response?.body?.data);
+
+      return response;
     } catch (error) {
       throw new Error('Error');
     } finally {
@@ -59,11 +79,29 @@ const DetailRecipeViewModel = () => {
     }
   };
 
+  const getNutrition = async (ingredients: IIngredient[]) => {
+    const ingredientsName = ingredients.map(ingredient => {
+      return `${ingredient?.quantity_detail[0]?.quantity || ''} ${
+        ingredient?.quantity_detail[0]?.unit_measurment?.name || ''
+      } ${ingredient?.name || ''}`;
+    });
+
+    await nutritionUsecase
+      .getNutritionFromIngredients(ingredientsName)
+      .then(response => {
+        setNutrions(response);
+      });
+  };
+
   useFocusEffect(
     useCallback(() => {
       let isActive = true;
       if (isActive) {
-        Promise.all([getRecipeById(recipeId)]);
+        getRecipeById(recipeId).then(response => {
+          if (response?.body?.data?.recipe_ingredient != undefined) {
+            getNutrition(response?.body?.data?.recipe_ingredient);
+          }
+        });
       }
 
       return () => {
@@ -71,10 +109,6 @@ const DetailRecipeViewModel = () => {
       };
     }, []),
   );
-
-  // useEffect(() => {
-  //   getRecipeById(recipeId);
-  // }, []);
 
   return {
     recipe,
@@ -85,6 +119,9 @@ const DetailRecipeViewModel = () => {
     setTab,
     handleAddFavorite,
     handleRemoveFavorite,
+    isAuthenticated,
+    handleToggleFavorite,
+    nutrions,
   };
 };
 

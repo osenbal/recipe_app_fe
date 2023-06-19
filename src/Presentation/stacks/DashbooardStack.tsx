@@ -8,6 +8,8 @@ import HomeView from '@presentation/views/dashboard/Home.view';
 import MyFavoriteView from '@presentation/views/dashboard/MyFavorited.view';
 import ProfileView from '@presentation/views/dashboard/Profile.view';
 import AddRecipeView from '@presentation/views/dashboard/AddRecipe.view';
+import {useAuthContext} from '@presentation/context/auth.context';
+import {ROLE} from '@domain/entity/user/structures/GetUserResponse';
 
 import IconHome from '@assets/icons/navigation/icon_home.svg';
 import IconHomeActive from '@assets/icons/navigation/icon_homeActive.svg';
@@ -23,6 +25,8 @@ const backgroundNav = require('@assets/icons/navigation/Bg.png');
 const Tab = createBottomTabNavigator();
 
 const DashboardStack = () => {
+  const {user, isAuthenticated} = useAuthContext();
+
   return (
     <Tab.Navigator
       sceneContainerStyle={{backgroundColor: 'transparent'}}
@@ -88,32 +92,36 @@ const DashboardStack = () => {
         }}
       />
 
-      <Tab.Screen
-        name="AddRecipe"
-        component={AddRecipeView}
-        options={{
-          headerShown: false,
-          tabBarIcon: ({focused}) => {
-            return (
-              <View>
-                <View
-                  style={{
-                    backgroundColor: colors.primaryColors.primary100,
-                    width: 50,
-                    height: 50,
-                    borderRadius: 50 / 2,
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    marginBottom: 40,
-                  }}>
-                  <IconPlus />
+      {user?.role_id === ROLE.CHEF ? (
+        <Tab.Screen
+          name="AddRecipe"
+          component={AddRecipeView}
+          options={{
+            headerShown: false,
+            tabBarIcon: ({focused}) => {
+              return (
+                <View>
+                  <View
+                    style={{
+                      backgroundColor: colors.primaryColors.primary100,
+                      width: 50,
+                      height: 50,
+                      borderRadius: 50 / 2,
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      marginBottom: 40,
+                    }}>
+                    <IconPlus />
+                  </View>
                 </View>
-              </View>
-            );
-          },
-        }}
-      />
+              );
+            },
+          }}
+        />
+      ) : (
+        <></>
+      )}
 
       <Tab.Screen
         name="Notification"
@@ -139,6 +147,14 @@ const DashboardStack = () => {
       <Tab.Screen
         name="Profile"
         component={ProfileView}
+        listeners={({navigation}) => ({
+          tabPress: e => {
+            if (isAuthenticated === false) {
+              e.preventDefault();
+              navigation.navigate('ModalMustLogin');
+            }
+          },
+        })}
         options={{
           headerShown: false,
           tabBarIcon: ({focused}) => {

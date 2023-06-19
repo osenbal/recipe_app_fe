@@ -71,7 +71,6 @@ const AddRecipeViewModel = () => {
         quality: 1,
       },
       (response: any) => {
-        console.log(response);
         if (response.didCancel) {
           return;
         } else if (response.errorCode) {
@@ -241,7 +240,6 @@ const AddRecipeViewModel = () => {
 
     try {
       const response = await recipeUsecase.addRecipe(formData);
-      console.log('CREATE RECIPE : ', response);
     } catch (error) {
       console.log('err : ', error);
     }

@@ -3,6 +3,7 @@ export const colors = {
   rating: '#FFAD30',
   warning: '#FD3654',
   warningLight: '#FFE1E7',
+  error: '#FD3654',
 
   neutralColors: {
     white: '#FFFFFF',

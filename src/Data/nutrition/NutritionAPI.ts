@@ -20,7 +20,6 @@ export default class NutritionAPI implements INutritionRepository {
     };
     try {
       const response = await axios.post(apiUrl, body, {params});
-      console.log('nutrition :', response.data);
       return response.data;
     } catch (error) {
       throw new Error('Error');

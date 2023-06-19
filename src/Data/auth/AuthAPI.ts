@@ -20,8 +20,6 @@ export default class AuthAPI implements IAuthRepository {
   }
 
   async login(email: string, password: string): Promise<ILoginResponse> {
-    console.log('================');
-    console.log('login');
     try {
       return await fetch(`${REACT_APP_API_URL}/auth/login`, {
         method: 'POST',

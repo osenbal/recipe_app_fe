@@ -59,8 +59,6 @@ export default class RecipeAPI implements IRecipeRepository {
         Object.assign(queryParam, {filterTime});
       }
 
-      console.log('QUERY PARAM : ', queryParam);
-
       const response = await axios.get('/recipe/filter', {
         params: queryParam,
       });
@@ -114,7 +112,6 @@ export default class RecipeAPI implements IRecipeRepository {
           'Content-Type': 'multipart/form-data',
         },
       });
-      console.log('response create new recipe', response);
       return response.data;
     } catch (error) {
       console.log('error : ', error);

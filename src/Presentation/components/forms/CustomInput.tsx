@@ -80,6 +80,7 @@ const CustomInput: React.FC<Props> = ({
             style={[
               styles.input,
               isFocused && {color: colors.neutralColors.black},
+              disabled && {color: colors.neutralColors.gray2},
             ]}
             value={value}
             placeholder={placeholder}

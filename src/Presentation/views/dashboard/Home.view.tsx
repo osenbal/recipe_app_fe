@@ -7,6 +7,7 @@ import {
   StyleSheet,
   ScrollView,
   RefreshControl,
+  Button,
 } from 'react-native';
 import LayoutPadding from '@presentation/layouts/LayoutPadding';
 import CustomInput from '@presentation/components/forms/CustomInput';
@@ -17,8 +18,8 @@ import CardPost, {
 } from '@presentation/components/card/CardPost';
 import {BottomSheetBackdrop} from '@gorhom/bottom-sheet';
 import FilterBottomSheet from '@presentation/components/bottomSheet/FilterBottomSheet';
-
 import {IRecipeResponseBody} from '@domain/entity/recipe/structures/GetRecipes';
+import ModalMustLogin from '@presentation/components/modal/ModalMustLogin';
 
 import {fonts} from '@assets/fonts/fonts';
 import {colors} from '@assets/colors/colors';
@@ -39,10 +40,6 @@ const HomeView: React.FC = ({navigation}: any) => {
     handleSearchRecipe,
     refreshing,
     onRefresh,
-    handleAddFavorite,
-    handleRemoveFavorite,
-    showModalFilter,
-    setShowModalFilter,
     bottomSheetRef,
     snapPoints,
     handleSheetChanges,
@@ -56,6 +53,8 @@ const HomeView: React.FC = ({navigation}: any) => {
     handleFilter,
     dish,
     handleBackAction,
+    isAuthenticated,
+    toggleFavorite,
   } = HomeViewModel();
 
   // renders
@@ -63,9 +62,11 @@ const HomeView: React.FC = ({navigation}: any) => {
     (props: any) => (
       <BottomSheetBackdrop
         {...props}
+        onRequestClose={() => {
+          bottomSheetRef.current?.close();
+        }}
         opacity={0.5}
         onPress={() => {
-          setShowModalFilter(false);
           bottomSheetRef.current?.close();
         }}
       />
@@ -123,7 +124,7 @@ const HomeView: React.FC = ({navigation}: any) => {
 
                 <FilterButton
                   onPress={() => {
-                    setShowModalFilter(true);
+                    bottomSheetRef.current?.expand();
                   }}
                   outline={false}
                   style={{
@@ -193,9 +194,9 @@ const HomeView: React.FC = ({navigation}: any) => {
                           imageUrl={recipe.thumbnail_url}
                           isFavorited={recipe.is_favorite}
                           handleFavorite={() => {
-                            recipe.is_favorite === false
-                              ? handleAddFavorite(recipe.id)
-                              : handleRemoveFavorite(recipe.id);
+                            isAuthenticated
+                              ? toggleFavorite(recipe.id, recipe.is_favorite)
+                              : navigation.navigate('ModalMustLogin');
                           }}
                           onPress={() =>
                             navigation.navigate('DetailRecipe', {
@@ -250,26 +251,23 @@ const HomeView: React.FC = ({navigation}: any) => {
           </LayoutPadding>
         </ScrollView>
       </SafeAreaView>
-      {showModalFilter ? (
-        <FilterBottomSheet
-          snapPoints={snapPoints}
-          bottomSheetRef={bottomSheetRef}
-          handleSheetChanges={handleSheetChanges}
-          renderBackdrop={renderBackdrop}
-          handleFilter={handleFilter}
-          filterTime={filterTime}
-          setFilterTime={setFilterTime}
-          filterCategory={filterCategory}
-          setFilterCategory={setFilterCategory}
-          filterDish={filterDish}
-          setFilterDish={setFilterDish}
-          filterTimeData={filterTimeData}
-          categories={categories}
-          dish={dish}
-        />
-      ) : (
-        <></>
-      )}
+
+      <FilterBottomSheet
+        snapPoints={snapPoints}
+        bottomSheetRef={bottomSheetRef}
+        handleSheetChanges={handleSheetChanges}
+        renderBackdrop={renderBackdrop}
+        handleFilter={handleFilter}
+        filterTime={filterTime}
+        setFilterTime={setFilterTime}
+        filterCategory={filterCategory}
+        setFilterCategory={setFilterCategory}
+        filterDish={filterDish}
+        setFilterDish={setFilterDish}
+        filterTimeData={filterTimeData}
+        categories={categories}
+        dish={dish}
+      />
     </>
   );
 };
