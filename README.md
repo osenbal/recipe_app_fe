@@ -2,7 +2,7 @@
 
 Muantapp adalah aplikasi list resep makanan, yang bertujuan khusus untuk resep makanan yang sehat, disertai dengan nutrisi yang terdapat dalam makanan.
 
-## How To Start This Project
+### How To Start This Project
 
 1. create file .env in root directory
 2. fill file .env same with .env-example
@@ -18,7 +18,7 @@ Muantapp adalah aplikasi list resep makanan, yang bertujuan khusus untuk resep m
     npm run start
 ```
 
-## This Project using
+### This Project using
 
 1. RN 0.71.8
 2. Typescript
