@@ -26,3 +26,8 @@ Muantapp adalah aplikasi list resep makanan, yang bertujuan khusus untuk resep m
 4. minSdkVersion = 21
 5. compileSdkVersion = 33
 6. targetSdkVersion = 33
+
+### Backend
+
+GITHUB : https://github.com/osenbal/recipe_api
+DEPLOY : https://recipeapi-production-a8b2.up.railway.app
