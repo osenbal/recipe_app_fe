@@ -3,8 +3,6 @@ import {IUser} from '@domain/entity/user/structures/GetUserResponse';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import UserUsecase from '@domain/interactors/user/UserUsecase';
 import UserAPI from '@data/user/UserAPI';
-import LoginUsecase from '@domain/interactors/auth/LoginUsecase';
-import AuthAPI from '@data/auth/AuthAPI';
 
 type AuthContextType = {
   isAuthenticated: boolean;
@@ -17,8 +15,6 @@ export const AuthContext = React.createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({children}: any) => {
   const userUsecase = new UserUsecase(new UserAPI());
-  const loginUsecase = new LoginUsecase(new AuthAPI());
-
   const [isAuthenticated, setIsAuthenticated] = React.useState<boolean>(false);
   const [user, setUser] = React.useState<IUser | null>(null);
   const [loading, setLoading] = React.useState<boolean>(true);

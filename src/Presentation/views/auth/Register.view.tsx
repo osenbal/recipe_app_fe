@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {Text, View, StyleSheet, SafeAreaView, ScrollView} from 'react-native';
+import {RegisterViewModel} from '@presentation/view-model/auth/Register.view-model';
 import LayoutPadding from '@presentation/layouts/LayoutPadding';
 import CustomButton from '@presentation/components/buttons/CustomButton';
 import CustomInput from '@presentation/components/forms/CustomInput';
@@ -8,7 +9,18 @@ import {colors} from '@assets/colors/colors';
 import IconArrowLeft from '@assets/icons/icon_arrowLeft.svg';
 
 const RegisterView: React.FC = ({navigation}: any) => {
-  const [type, setType] = useState<1 | 0 | null>(null);
+  const {
+    email,
+    setEmail,
+    password,
+    setPassword,
+    confirmPassword,
+    setConfirmPassword,
+    register,
+    type,
+    setType,
+    errors,
+  } = RegisterViewModel();
 
   return (
     <>
@@ -90,18 +102,35 @@ const RegisterView: React.FC = ({navigation}: any) => {
                 </View>
 
                 <View style={styles.container_input}>
-                  <CustomInput label="Email" placeholder="Enter Email" />
-                  <CustomInput label="Password" placeholder="Enter Password" />
+                  <CustomInput
+                    label="Email"
+                    placeholder="Enter Email"
+                    value={email}
+                    onChange={value => setEmail(value)}
+                    error={errors.email}
+                  />
+                  <CustomInput
+                    label="Password"
+                    placeholder="Enter Password"
+                    value={password}
+                    onChange={value => setPassword(value)}
+                    secureTextEntry={true}
+                    error={errors.password}
+                  />
                   <CustomInput
                     label="Confirm Password"
                     placeholder="Enter Confirm Password"
+                    value={confirmPassword}
+                    onChange={value => setConfirmPassword(value)}
+                    secureTextEntry={true}
+                    error={errors.confirmPassword}
                   />
                 </View>
 
                 <View style={{marginTop: 26}}>
                   <CustomButton
                     label="Create Account"
-                    onPress={() => navigation.navigate('Home')}
+                    onPress={register}
                     disabled={false}
                     iconPosition="right"
                     icon={

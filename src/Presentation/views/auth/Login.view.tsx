@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  Text,
-  SafeAreaView,
-  View,
-  ScrollView,
-  StyleSheet,
-  ToastAndroid,
-} from 'react-native';
+import {Text, SafeAreaView, View, ScrollView, StyleSheet} from 'react-native';
 import FilterButton from '@presentation/components/buttons/FilterButton';
 import LayoutPadding from '@presentation/layouts/LayoutPadding';
 import CustomInput from '@presentation/components/forms/CustomInput';

@@ -4,14 +4,19 @@ import IAuthRepository from '@domain/repository/auth/AuthRepository';
 import {REACT_APP_API_URL} from '@env';
 
 export default class AuthAPI implements IAuthRepository {
-  async register(email: string, password: string): Promise<IRegisterResponse> {
+  async register(
+    email: string,
+    password: string,
+    type: number,
+  ): Promise<IRegisterResponse> {
     try {
-      return await fetch(`${REACT_APP_API_URL}/auth/register`, {
+      return await fetch(`${REACT_APP_API_URL}/auth/user/register`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
           email,
           password,
+          type,
         }),
       }).then(response => response.json());
     } catch (error) {

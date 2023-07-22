@@ -11,7 +11,8 @@ import LayoutPadding from '@presentation/layouts/LayoutPadding';
 import ModalShowCamAndGallery from '@presentation/components/views/AddRecipe/ModalShowCamAndGallery';
 import CustomInput from '@presentation/components/forms/CustomInput';
 import CustomButton from '@presentation/components/buttons/CustomButton';
-import InputIngredient from '@presentation/components/views/AddRecipe/InputIngredient';
+import InputOnlyUnit from '@presentation/components/views/AddRecipe/InputOnlyUnit';
+import InputOnlyIngredient from '@presentation/components/views/AddRecipe/InputOnlyIngredient';
 import ButtonDelete from '@presentation/components/views/AddRecipe/ButtonDelete';
 import SelectInput from '@presentation/components/forms/SelectInput';
 import useAddRecipeViewModel from '@presentation/view-model/dashboard/addRecipe.view-model';
@@ -37,9 +38,7 @@ const AddRecipeView: React.FC = () => {
     instructions,
     addInstruction,
     deleteInstruction,
-    category,
     setCategory,
-    dish,
     setDish,
     data,
     setData,
@@ -47,7 +46,6 @@ const AddRecipeView: React.FC = () => {
     listDish,
     listIngredient,
     listUnit,
-    getNutritionFromIngredients,
     nutrition,
     handleCreateRecipe,
   } = useAddRecipeViewModel();
@@ -226,7 +224,7 @@ const AddRecipeView: React.FC = () => {
                 {ingredients.map((item, index) => {
                   return (
                     <View key={index}>
-                      <InputIngredient
+                      {/* <InputIngredient
                         label={`Ingredient ${index + 1}`}
                         onChangeIngredient={(e: any) => {
                           setIngredients(prev => {
@@ -271,7 +269,66 @@ const AddRecipeView: React.FC = () => {
                         }}
                         ingredients={listIngredient}
                         units={listUnit}
+                      /> */}
+
+                      <InputOnlyIngredient
+                        label={`Ingredient ${index + 1}`}
+                        onChangeIngredient={(e: any) => {
+                          setIngredients(prev => {
+                            return prev.map((item: any, idx: number) => {
+                              if (idx === index) {
+                                return {
+                                  ...item,
+                                  ingredient_id: e.id,
+                                  ingredient_name: e.name,
+                                };
+                              }
+                              return item;
+                            });
+                          });
+                        }}
+                        ingredients={listIngredient}
                       />
+
+                      <CustomInput
+                        label="Amount"
+                        keyboardType="numeric"
+                        placeholder="enter amount ingredient"
+                        value={item.quantity?.toString()}
+                        onChange={v => {
+                          setIngredients(prev => {
+                            return prev.map((item: any, idx: number) => {
+                              if (idx === index) {
+                                return {
+                                  ...item,
+                                  quantity: v,
+                                };
+                              }
+                              return item;
+                            });
+                          });
+                        }}
+                      />
+
+                      <InputOnlyUnit
+                        label="Unit"
+                        onChangeUnit={(e: any) => {
+                          setIngredients(prev => {
+                            return prev.map((item: any, idx: number) => {
+                              if (idx === index) {
+                                return {
+                                  ...item,
+                                  unit_id: e.id,
+                                  unit_name: e.name,
+                                };
+                              }
+                              return item;
+                            });
+                          });
+                        }}
+                        units={listUnit}
+                      />
+
                       <ButtonDelete
                         style={{marginTop: 15}}
                         onPress={() => deleteIngredient(index)}

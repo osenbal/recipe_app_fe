@@ -54,4 +54,8 @@ export default class RecipeUsecase {
   async addRecipe(formData: any) {
     return await this.recipeRepository.addRecipe(formData);
   }
+
+  async deleteRecipe(recipeId: number) {
+    return await this.recipeRepository.deleteRecipe(recipeId);
+  }
 }

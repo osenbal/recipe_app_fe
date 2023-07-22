@@ -4,13 +4,16 @@ import RecipeAPI from '@data/recipe/RecipeAPI';
 import RecipeUsecase from '@domain/interactors/recipe/RecipeUsecase';
 import NutritionAPI from '@data/nutrition/NutritionAPI';
 import NutritionUsecase from '@domain/interactors/nutrition/NutritionUsecase';
+import {ToastAndroid} from 'react-native';
 
-import {useFocusEffect} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {IUnit} from '@domain/entity/recipe/structures/GetRecipeById';
 import {IIngredient} from '@domain/entity/recipe/structures/GetIngredient';
 import {Platform} from 'react-native';
+import {IAddRecipeResponse} from '@domain/entity/recipe/structures/AddRecipeResponse';
 
 const AddRecipeViewModel = () => {
+  const navigation = useNavigation();
   const recipeUsecase = new RecipeUsecase(new RecipeAPI());
   const nutritionUsecase = new NutritionUsecase(new NutritionAPI());
 
@@ -239,7 +242,39 @@ const AddRecipeViewModel = () => {
     formData.append('nutritions[sugar]', nutritions.sugar);
 
     try {
-      const response = await recipeUsecase.addRecipe(formData);
+      const response: IAddRecipeResponse = await recipeUsecase.addRecipe(
+        formData,
+      );
+
+      if (response.status === 200) {
+        ToastAndroid.show(
+          `${response.message || 'Register success'}`,
+          ToastAndroid.SHORT,
+        );
+
+        // set state to default
+        setThumbnail(null);
+        setIngredients([]);
+        setInstructions(['', '']);
+        setCategory(null);
+        setDish(null);
+        setData({
+          title: '',
+          description: '',
+          video_url: '',
+          cookingTime: '',
+          prepTime: '',
+          serving: '',
+        });
+        setNutrition({
+          calories: '',
+          protein: '',
+          carbs: '',
+          sugar: '',
+        });
+
+        navigation.navigate('Home' as never);
+      }
     } catch (error) {
       console.log('err : ', error);
     }
@@ -259,8 +294,6 @@ const AddRecipeViewModel = () => {
       }
       return;
     });
-
-    console.log('ingredientsArray : ', ingredientsArray);
 
     if (ingredientsArray.length === 0) {
       return;

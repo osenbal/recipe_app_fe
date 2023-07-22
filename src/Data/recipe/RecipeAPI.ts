@@ -118,4 +118,18 @@ export default class RecipeAPI implements IRecipeRepository {
       throw new Error('Error');
     }
   }
+
+  async deleteRecipe(recipeId: number) {
+    try {
+      const response = await axios.delete(`/recipe/${recipeId}`, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      return response.data;
+    } catch (error) {
+      throw new Error('Error');
+    }
+  }
 }

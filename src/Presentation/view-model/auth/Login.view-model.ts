@@ -132,7 +132,7 @@ export default function LoginViewModel() {
     } catch (error: any) {
       console.log('Login Error :', error);
       ToastAndroid.show(JSON.stringify(error?.message), ToastAndroid.SHORT);
-      throw error;
+      // throw error;
     } finally {
       setIsLoadingLogin(false);
     }

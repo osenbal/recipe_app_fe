@@ -7,7 +7,6 @@ import {
   StyleSheet,
   ScrollView,
   RefreshControl,
-  Button,
 } from 'react-native';
 import LayoutPadding from '@presentation/layouts/LayoutPadding';
 import CustomInput from '@presentation/components/forms/CustomInput';
@@ -19,7 +18,6 @@ import CardPost, {
 import {BottomSheetBackdrop} from '@gorhom/bottom-sheet';
 import FilterBottomSheet from '@presentation/components/bottomSheet/FilterBottomSheet';
 import {IRecipeResponseBody} from '@domain/entity/recipe/structures/GetRecipes';
-import ModalMustLogin from '@presentation/components/modal/ModalMustLogin';
 
 import {fonts} from '@assets/fonts/fonts';
 import {colors} from '@assets/colors/colors';

@@ -1,6 +1,6 @@
 import IAuthRepository from '@domain/repository/auth/AuthRepository';
 import {ILoginResponse} from '@domain/entity/auth/structures/LoginResponse';
-import {validateEmail, validatePassword} from '@utils/ValidationCredential';
+import {validateEmail} from '@utils/ValidationCredential';
 
 export default class LoginUsecase {
   private authRepository: IAuthRepository;

@@ -8,6 +8,8 @@ import IconBookmark from '@assets/icons/icon_bookmark.svg';
 import IconTimer from '@assets/icons/icon_timer.svg';
 const imgThumb = require('@assets/images/post/img_thumb.png');
 const ImgRecipe1 = require('@assets/images/post/img_recipe1.png');
+import IconDelete from '@assets/icons/icon_delete.svg';
+import IconEdit from '@assets/icons/icon_edit.svg';
 
 type Props = {
   id: number;
@@ -148,6 +150,7 @@ type PropsFavoriteRecipe = {
   chef_name: string;
   chef_email: string;
   thumbnail_url: string | null;
+  favoriteVisible?: boolean;
 };
 export const CardFavoriteRecipe: React.FC<PropsFavoriteRecipe> = ({
   onPress,
@@ -157,6 +160,7 @@ export const CardFavoriteRecipe: React.FC<PropsFavoriteRecipe> = ({
   chef_name,
   chef_email,
   thumbnail_url,
+  favoriteVisible = true,
 }) => {
   return (
     <Pressable style={{marginTop: 10}} onPress={onPress}>
@@ -242,21 +246,25 @@ export const CardFavoriteRecipe: React.FC<PropsFavoriteRecipe> = ({
               }}>
               {cooking_time} min
             </Text>
-            <Pressable
-              onPress={onPressFavorite}
-              style={{
-                backgroundColor: colors.primaryColors.primary100,
-                borderRadius: 24 / 2,
-                width: 24,
-                height: 24,
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                flexDirection: 'row',
-                marginLeft: 5,
-              }}>
-              <IconBookmark width={17} height={17} />
-            </Pressable>
+            {favoriteVisible ? (
+              <Pressable
+                onPress={onPressFavorite}
+                style={{
+                  backgroundColor: colors.primaryColors.primary100,
+                  borderRadius: 24 / 2,
+                  width: 24,
+                  height: 24,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  flexDirection: 'row',
+                  marginLeft: 5,
+                }}>
+                <IconBookmark width={17} height={17} />
+              </Pressable>
+            ) : (
+              <></>
+            )}
           </View>
         </View>
       </View>
@@ -303,6 +311,144 @@ export const CardPostSearchResult: React.FC<PropsCardPostSearchResult> = ({
         </Text>
       </View>
     </Pressable>
+  );
+};
+
+type PropsMyRecipe = {
+  onPress?: () => void;
+  title: string;
+  cooking_time: number;
+  chef_name: string;
+  chef_email: string;
+  thumbnail_url: string | null;
+  onDelete?: () => void;
+  onEdit?: () => void;
+};
+export const CardPostMyRecipe: React.FC<PropsMyRecipe> = ({
+  onPress,
+  title,
+  cooking_time,
+  chef_name,
+  chef_email,
+  thumbnail_url,
+  onDelete,
+  onEdit,
+}) => {
+  return (
+    <View style={{position: 'relative'}}>
+      <Pressable
+        onPress={() => {}}
+        style={{
+          position: 'absolute',
+          right: 0,
+          top: 20,
+          borderRadius: 5,
+          zIndex: 5,
+        }}>
+        <View
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            columnGap: 16,
+          }}>
+          <Pressable onPress={onEdit}>
+            <IconEdit width={24} height={24} />
+          </Pressable>
+          <Pressable onPress={onDelete}>
+            <IconDelete width={24} height={24} />
+          </Pressable>
+        </View>
+      </Pressable>
+      <Pressable style={{marginTop: 10}} onPress={onPress}>
+        <View>
+          <LinearGradient
+            style={{
+              position: 'absolute',
+              width: '100%',
+              height: '100%',
+              zIndex: 1,
+              opacity: 0.3,
+              borderRadius: 10,
+            }}
+            colors={['white', 'black']}
+            start={{x: 0, y: 0}}
+            end={{x: 0, y: 0}}></LinearGradient>
+
+          <Image
+            source={thumbnail_url ? {uri: thumbnail_url} : ImgRecipe1}
+            style={{
+              width: '100%',
+              height: 150,
+              borderRadius: 10,
+              resizeMode: 'cover',
+            }}
+          />
+        </View>
+
+        <View
+          style={{
+            zIndex: 5,
+            position: 'absolute',
+            bottom: 10,
+            paddingHorizontal: 10,
+            width: '100%',
+          }}>
+          <Text
+            numberOfLines={2}
+            ellipsizeMode="tail"
+            style={{
+              color: colors.neutralColors.white,
+              fontFamily: fonts.smallTextBold.fontFamily,
+              fontSize: fonts.smallTextBold.fontSize,
+              fontWeight: 'bold',
+            }}>
+            {title}
+          </Text>
+
+          <View
+            style={{
+              paddingTop: 30,
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+            }}>
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={{
+                color: colors.neutralColors.white,
+                fontFamily: fonts.smallTextRegular.fontFamily,
+                fontSize: fonts.smallTextRegular.fontSize,
+                fontWeight: '400',
+              }}>
+              by {chef_name || chef_email}
+            </Text>
+
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                columnGap: 5,
+              }}>
+              <IconTimer width={17} height={17} />
+              <Text
+                style={{
+                  color: colors.neutralColors.white,
+                  fontFamily: fonts.smallTextRegular.fontFamily,
+                  fontSize: fonts.smallTextRegular.fontSize,
+                  fontWeight: '400',
+                }}>
+                {cooking_time} min
+              </Text>
+            </View>
+          </View>
+        </View>
+      </Pressable>
+    </View>
   );
 };
 

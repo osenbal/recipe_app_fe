@@ -8,6 +8,7 @@ import HomeView from '@presentation/views/dashboard/Home.view';
 import MyFavoriteView from '@presentation/views/dashboard/MyFavorited.view';
 import ProfileView from '@presentation/views/dashboard/Profile.view';
 import AddRecipeView from '@presentation/views/dashboard/AddRecipe.view';
+import Notification from '@presentation/views/dashboard/Notification.view';
 import {useAuthContext} from '@presentation/context/auth.context';
 import {ROLE} from '@domain/entity/user/structures/GetUserResponse';
 
@@ -125,7 +126,7 @@ const DashboardStack = () => {
 
       <Tab.Screen
         name="Notification"
-        component={HomeView}
+        component={Notification}
         options={{
           headerShown: false,
           tabBarIcon: ({focused}) => {

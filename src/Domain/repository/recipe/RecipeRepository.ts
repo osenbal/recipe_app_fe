@@ -20,4 +20,5 @@ export default interface IRecipeRepository {
   getListUnit: () => Promise<IGetUnitResponse>;
   getListIngredient: () => Promise<IGetIngredientsResponse>;
   addRecipe: (formData: any) => Promise<any>;
+  deleteRecipe: (recipeId: number) => Promise<any>;
 }
