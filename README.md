@@ -1,14 +1,14 @@
 ## HOw To Start This Project
 
-1. buat file .env
-2. isi file .env sama dengan yang ada di file .env-example
+1. create file .env in root directory
+2. fill file .env same with .env-example
 3. install dependecies project
 
 ```
     npm install
 ```
 
-4. jalankan project
+4. run project
 
 ```
     npm run start
