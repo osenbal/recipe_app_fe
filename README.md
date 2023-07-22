@@ -1,3 +1,7 @@
+### Muantapp
+
+Muantapp adalah aplikasi list resep makanan, yang bertujuan khusus untuk resep makanan yang sehat, disertai dengan nutrisi yang terdapat dalam makanan.
+
 ## How To Start This Project
 
 1. create file .env in root directory
